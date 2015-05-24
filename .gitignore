@@ -1,0 +1,11 @@
+Preliminary_description_of_data_cache/
+.Rproj.user/
+*.Rhistory
+*.ttf
+*.js
+*.css
+*.eot
+*.svg
+*.woff
+.Rproj.user
+*.RData

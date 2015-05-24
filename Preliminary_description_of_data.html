@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<title>RCE: Visualizing the Results, Part I</title>
+
+<script src="Preliminary_description_of_data_files/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="Preliminary_description_of_data_files/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
+<script src="Preliminary_description_of_data_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="Preliminary_description_of_data_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="Preliminary_description_of_data_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="Preliminary_description_of_data_files/highlight/default.css"
+      type="text/css" />
+<script src="Preliminary_description_of_data_files/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img { 
+  max-width:100%; 
+  height: auto; 
+}
+</style>
+<div class="container-fluid main-container">
+
+
+<div id="header">
+<h1 class="title">RCE: Visualizing the Results, Part I</h1>
+</div>
+
+
+<p>(This post will be updated as new data – late submissions – come in. Another post analysing the correlation between our regime data and corruption data will follow in the middle of the week).</p>
+<p>We have now gathered enough data to start answering the research question you selected at the beginning of the term (seems like ages ago!). You designed a classification system in tutorials, and individually gathered data on lots of countries (111 so far to be exact). And the results are really good; your classification correlates at 0.79 with <a href="httm://freedomhouse.org">Freedom House</a> and at 0.76 with <a href="http://www.systemicpeace.org/inscr/">Polity IV</a>. This is not bad at all; Polity IV and Freedom House themselves correlate at 0.89, which is only slightly higher. Professionals do not always agree about whether a country is democratic or not. These results make me feel benevolent; perhaps I should restore some of your points!</p>
+<p>I have now done some preliminary cleanup and analysis work on your data - enough so you can start using it. The main version of the dataset your efforts have produced is available <a href="https://www.dropbox.com/s/lce221sg8ftsbz5/rce.csv?dl=0">here</a>. This file collects all your answers, puts them in a spreadsheet format, and calculates the “score” you gave the country. It is not straightforward to use or understand,<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> so in the rest of this post, I will point out some general patterns and show you a couple of useful graphs. (There are also many things we could do with it but are too technical for us; more on these in the second post).</p>
+<p>The first thing we can do is simply to show you the results of your classification. Most countries were rated at different time periods by two or more students; some of you chose longer periods, others chose shorter periods of time, but most chose periods of at least 4-5 years, which gives us a reasonable amount of regime data (including some transitions to democracy or to authoritarianism, since the periods chosen by you often overlapped for a given country). We can thus simply average each student rating per year and plot the results per country, showing the variation over time and space in the POLS209 “democracy score”:</p>
+<p><img src="Preliminary_description_of_data_files/figure-html/unnamed-chunk-1-1.png" /></p>
+<p>Democracies are in blue, hybrid regimes are in green, and non-democratic regimes are in red in this scheme (though the tripartite division is arbitrary; we could split the scores in a different way, if you prefer). As you can see, you rated many “non-Western” countries as democratic (the word is still censored, by the way). In fact, despite the heavy reliance of this class on the <a href="httm://freedomhouse.org">Freedom House</a> website (most of you used FH as one source, judging from your justifications), if anything you tended to be more forgiving than FH; your classifications are a bit more “democratic” than theirs.</p>
+<p>One way of visualizing your divergences from Freedom House scores is in the graph below, which rescales your scores to the range of 0-1, in order to compare them with FH scores, also rescaled (and reversed) to fit within the interval 0-1. (We restrict ourselves here to the period 1972-2014, where FH data exists). The black lines show the freedom house scores; the colored lines show your scores. A stronger color indicates greater divergence from FH scores; blue means that your classification is more “democratic” than that of FH, while red means it is less so. Countries at the top show the most differences between the POLS209 team and Freedom House; countries at the bottom are basically invisible, since your scores are almost identical to those given by Freedom House:</p>
+<p><img src="Preliminary_description_of_data_files/figure-html/unnamed-chunk-2-1.png" /></p>
+<p>Countries at the bottom tend to be clear democracies or non-democratic systems; countries at the top are more complicated, which may account for some of the differences between POLS209 and Freedom House. As usual, I cannot find differences with the degree of confidence (more confident students are no more or less likely to differ from Freedom House).</p>
+<p>What other visualizations would you like to see? (Comparisons involving corruption data in the next post, later this week).</p>
+<p>All code for this post is available <a href="https://github.com/xmarquez/RCE-2015">in this repository</a>. If you are technically minded and want to learn some more, you might wish to download the <a href="http://www.r-project.org/">R programming language</a> and <a href="http://www.rstudio.com/">RStudio</a> and play with it; I can help you if you are interested. (If you want to replicate the graphs and correlations above, you will also need a spreadsheet with the Freedom House scores, available <a href="https://drive.google.com/file/d/0B5wyt4eDq98GZVhUamRKVXJpLVU/view?usp=sharing">here</a>.)</p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>If you don’t understand the spreadsheet, don’t worry! I’ll do most of the analysis for you here, and you can ask questions in the comments below this post.<a href="#fnref1">↩</a></p></li>
+</ol>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
