@@ -2,7 +2,7 @@
 
 (This post will be updated as new data -- late submissions -- come in. Another post analysing the correlation between our regime data and corruption data will follow in the middle of the week).
 
-(Last updated 2015-05-26 16:38:12)
+(Last updated 2015-05-26 17:02:33)
 
 
 

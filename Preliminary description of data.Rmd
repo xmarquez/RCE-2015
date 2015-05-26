@@ -47,7 +47,7 @@ The main version of the dataset your efforts have produced is available [here](h
 
 The first thing we can do is simply to show you the results of your classification. Most countries were rated at different time periods by two or more students; some of you chose longer periods, others chose shorter periods of time, but most chose periods of at least 4-5 years, which gives us a reasonable amount of regime data (including some transitions to democracy or to authoritarianism, since the periods chosen by you often overlapped for a given country). We can thus simply average each student rating per year and plot the results per country, showing the variation over time and space in the POLS209 "democracy score":
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE, cache=TRUE,fig.height=25}
+```{r, echo=FALSE,warning=FALSE,message=FALSE,fig.height=25}
 data_tv_2 <- data %>% select(country,start.year,end.year,Score,contains("total"),confidence)
 data_tv_2 <- data_tv_2 %>% group_by(country,Score,PR_total,CL_total,confidence,start.year,end.year) %>% do(data.frame(year = .$start.year:.$end.year))
 data_tv_2 <- data_tv_2 %>% group_by(country,year) %>% summarise(Score = mean(Score,na.rm=TRUE))
@@ -62,8 +62,11 @@ Democracies are in blue, hybrid regimes are in green, and non-democratic regimes
 
 One way of visualizing your divergences from Freedom House scores is in the graph below, which rescales your scores to the range of 0-1, in order to compare them with FH scores, also rescaled (and reversed) to fit within the interval 0-1. (We restrict ourselves here to the period 1972-2014, where FH data exists). The black lines show the freedom house scores; the colored lines show your scores. A stronger color indicates greater divergence from FH scores; blue means that your classification is more "democratic" than that of FH, while red means it is less so. Countries at the top show the most differences between the POLS209 team and Freedom House; countries at the bottom are basically invisible, since your scores are almost identical to those given by Freedom House:
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE, cache=TRUE,fig.height=25}
+```{r, echo=FALSE,warning=FALSE,message=FALSE,fig.height=25}
 data_tv <- na.omit(data_tv) %>% filter(year >= 1971)
+
+data_tv <- data_tv %>% ungroup() %>% mutate(s = rescale(Score), fh = rescale(14 - pr - cl), error = s-fh, sd_error = error/sd(error,na.rm=TRUE))
+
 data_tv$country <- reorder(data_tv$country, desc(abs(data_tv$sd_error)),mean,na.rm=TRUE)
 qplot(data=data_tv %>% filter(!is.na(sd_error)), x = year, y=s, alpha = rescale(abs(s-fh),c(0.2,1)), color = sd_error ) + geom_path() + facet_wrap(~ country,ncol=5) + theme_bw() + geom_path(aes(y=fh),color="black",alpha=1)+ geom_point(aes(y=fh),color="black",alpha=1) + scale_color_gradient2()  + guides(color=guide_legend(title.position="top",direction="horizontal"),alpha=guide_legend(title.position="top",direction="horizontal")) + labs(x="Year",y="POLS209 Score",color = "Divergence from Freedom House \n(blue means POLS209 gives more democratic scores, red less)",alpha = "Divergence from Freedom House (more transparent means less absolute divergence)") + theme(legend.position = "bottom") + ggtitle("Differences between POLS209 and Freedom House democracy scores") 
 
