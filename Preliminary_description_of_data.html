@@ -13,11 +13,10 @@
 <title>RCE: Visualizing the Results, Part I</title>
 
 <script src="Preliminary_description_of_data_files/jquery-1.11.0/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="Preliminary_description_of_data_files/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
-<script src="Preliminary_description_of_data_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="Preliminary_description_of_data_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="Preliminary_description_of_data_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="Preliminary_description_of_data_files/bootstrap-2.3.2/css/bootstrap.min.css" rel="stylesheet" />
+<link href="Preliminary_description_of_data_files/bootstrap-2.3.2/css/bootstrap-responsive.min.css" rel="stylesheet" />
+<script src="Preliminary_description_of_data_files/bootstrap-2.3.2/js/bootstrap.min.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <link rel="stylesheet"
@@ -49,14 +48,6 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
-img { 
-  max-width:100%; 
-  height: auto; 
-}
 </style>
 <div class="container-fluid main-container">
 
@@ -67,8 +58,9 @@ img {
 
 
 <p>(This post will be updated as new data – late submissions – come in. Another post analysing the correlation between our regime data and corruption data will follow in the middle of the week).</p>
-<p>We have now gathered enough data to start answering the research question you selected at the beginning of the term (seems like ages ago!). You designed a classification system in tutorials, and individually gathered data on lots of countries (111 so far to be exact). And the results are really good; your classification correlates at 0.79 with <a href="httm://freedomhouse.org">Freedom House</a> and at 0.76 with <a href="http://www.systemicpeace.org/inscr/">Polity IV</a>. This is not bad at all; Polity IV and Freedom House themselves correlate at 0.89, which is only slightly higher. Professionals do not always agree about whether a country is democratic or not. These results make me feel benevolent; perhaps I should restore some of your points!</p>
-<p>I have now done some preliminary cleanup and analysis work on your data - enough so you can start using it. The main version of the dataset your efforts have produced is available <a href="https://www.dropbox.com/s/lce221sg8ftsbz5/rce.csv?dl=0">here</a>. This file collects all your answers, puts them in a spreadsheet format, and calculates the “score” you gave the country. It is not straightforward to use or understand,<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> so in the rest of this post, I will point out some general patterns and show you a couple of useful graphs. (There are also many things we could do with it but are too technical for us; more on these in the second post).</p>
+<p>(Last updated 2015-05-26 16:38:12)</p>
+<p>We have now gathered enough data to start answering the research question you selected at the beginning of the term (seems like ages ago!). You designed a classification system in tutorials, and individually gathered data on lots of countries (117 so far to be exact). And the results are really good; your classification correlates at 0.78 with <a href="httm://freedomhouse.org">Freedom House</a> and at 0.75 with <a href="http://www.systemicpeace.org/inscr/">Polity IV</a>. This is not bad at all; Polity IV and Freedom House themselves correlate at 0.89, which is only slightly higher. Professionals do not always agree about whether a country is democratic or not. These results make me feel benevolent; perhaps I should restore some of your points!</p>
+<p>The main version of the dataset your efforts have produced is available <a href="https://www.dropbox.com/s/lce221sg8ftsbz5/rce.csv?dl=0">here</a>. This file collects all your answers, puts them in a spreadsheet format, and calculates the “score” you gave the country. It is not straightforward to use or understand,<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> so in the rest of this post, I will point out some general patterns and show you a couple of useful graphs. (There are also many things we could do with it but are too technical for us; more on these in the second post).</p>
 <p>The first thing we can do is simply to show you the results of your classification. Most countries were rated at different time periods by two or more students; some of you chose longer periods, others chose shorter periods of time, but most chose periods of at least 4-5 years, which gives us a reasonable amount of regime data (including some transitions to democracy or to authoritarianism, since the periods chosen by you often overlapped for a given country). We can thus simply average each student rating per year and plot the results per country, showing the variation over time and space in the POLS209 “democracy score”:</p>
 <p><img src="Preliminary_description_of_data_files/figure-html/unnamed-chunk-1-1.png" /></p>
 <p>Democracies are in blue, hybrid regimes are in green, and non-democratic regimes are in red in this scheme (though the tripartite division is arbitrary; we could split the scores in a different way, if you prefer). As you can see, you rated many “non-Western” countries as democratic (the word is still censored, by the way). In fact, despite the heavy reliance of this class on the <a href="httm://freedomhouse.org">Freedom House</a> website (most of you used FH as one source, judging from your justifications), if anything you tended to be more forgiving than FH; your classifications are a bit more “democratic” than theirs.</p>

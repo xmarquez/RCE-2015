@@ -9,6 +9,8 @@ output:
 
 (This post will be updated as new data -- late submissions -- come in. Another post analysing the correlation between our regime data and corruption data will follow in the middle of the week).
 
+(Last updated `r lubridate::here()`)
+
 ```{r dataLoading, echo=FALSE,warning=FALSE,message=FALSE}
 library(dplyr)
 library(ggplot2)
@@ -24,11 +26,14 @@ polity <- polity %>% select(country, year, polity2) %>% filter(year > 1938)
 polity <- na.omit(polity)
 polity$country <- countrycode(polity$country, origin = "country.name", destination = "country.name", warn=TRUE)
 data_tv <- left_join(data_tv,polity)
+data_tv <- left_join(data_tv,fh)
+data_tv <- data_tv %>% mutate(fh = 14 - (pr + cl))
+
 fh.polity <- merge(fh,polity)
 fh.polity <- fh.polity %>% mutate(fh_total_reversed = 14 - (pr + cl))
  
-cor.fh <- round(cor(data_tv$s,data_tv$fh,use="pairwise.complete"),2)
-cor.polity <- round(cor(data_tv$s,data_tv$polity2,use="pairwise.complete"),2)
+cor.fh <- round(cor(data_tv$Score,data_tv$fh,use="pairwise.complete"),2)
+cor.polity <- round(cor(data_tv$Score,data_tv$polity2,use="pairwise.complete"),2)
 cor.fh.polity <- round(cor(fh.polity$fh_total_reversed,fh.polity$polity2,use="pairwise.complete"),2)
 
 
@@ -36,7 +41,7 @@ cor.fh.polity <- round(cor(fh.polity$fh_total_reversed,fh.polity$polity2,use="pa
 
 We have now gathered enough data to start answering the research question you selected at the beginning of the term (seems like ages ago!). You designed a classification system in tutorials, and individually gathered data on lots of countries (`r length(unique(data$country))` so far to be exact). And the results are really good; your classification correlates at `r cor.fh` with [Freedom House][FH] and at `r cor.polity` with [Polity IV][Polity]. This is not bad at all; Polity IV and Freedom House themselves correlate at `r cor.fh.polity`, which is only slightly higher. Professionals do not always agree about whether a country is democratic or not. These results make me feel benevolent; perhaps I should restore some of your points!
 
-I have now done some preliminary cleanup and analysis work on your data - enough so you can start using it. The main version of the dataset your efforts have produced is available [here](https://www.dropbox.com/s/lce221sg8ftsbz5/rce.csv?dl=0). This file collects all your answers, puts them in a spreadsheet format, and calculates the "score" you gave the country. It is not straightforward to use or understand,[^Questions] so in the rest of this post, I will point out some general patterns and show you a couple of useful graphs. (There are also many things we could do with it but are too technical for us; more on these in the second post).
+The main version of the dataset your efforts have produced is available [here](https://www.dropbox.com/s/lce221sg8ftsbz5/rce.csv?dl=0). This file collects all your answers, puts them in a spreadsheet format, and calculates the "score" you gave the country. It is not straightforward to use or understand,[^Questions] so in the rest of this post, I will point out some general patterns and show you a couple of useful graphs. (There are also many things we could do with it but are too technical for us; more on these in the second post).
 
 [^Questions]: If you don't understand the spreadsheet, don't worry! I'll do most of the analysis for you here, and you can ask questions in the comments below this post. 
 
