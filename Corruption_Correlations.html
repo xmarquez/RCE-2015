@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<title>RCE: Visualizing the Results, Part II: Corruption</title>
+
+<script src="Corruption_Correlations_files/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="Corruption_Correlations_files/bootstrap-2.3.2/css/bootstrap.min.css" rel="stylesheet" />
+<link href="Corruption_Correlations_files/bootstrap-2.3.2/css/bootstrap-responsive.min.css" rel="stylesheet" />
+<script src="Corruption_Correlations_files/bootstrap-2.3.2/js/bootstrap.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="Corruption_Correlations_files/highlight/default.css"
+      type="text/css" />
+<script src="Corruption_Correlations_files/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+<div class="container-fluid main-container">
+
+
+<div id="header">
+<h1 class="title">RCE: Visualizing the Results, Part II: Corruption</h1>
+</div>
+
+
+<p>(This post will be updated as new data – late submissions – come in. Another post with more complex analysis will be coming up later, probably tomorrow).</p>
+<p>(Last updated 2015-05-27 17:11:21)</p>
+<p>Corruption is tricky to measure, since it is, by definition, hidden. Efforts have been made by <a href="http://www.transparency.org/">Transparency International</a> and other organizations, including the <a href="http://info.worldbank.org/governance/wgi/index.aspx#doc-methodology">World Bank</a>, to develop indexes to track <em>perceptions</em> of corruption, but of course the perception of corruption is not the same thing as actual corruption, and such perceptions may not be consistent across countries. To be sure, we might expect that perceptions of corruption would be correlated with actual corruption, but it is also possible that a country that reforms suddenly sees lots of court cases and scandals coming to light, which might lead people to think corruption is worse there than in countries where it is unchecked but still hidden from public view. In any case, both the <a href="http://www.transparency.org/">Transparency International Corruption Perceptions Index</a> and the <a href="http://info.worldbank.org/governance/wgi/index.aspx#doc-methodology">World Bank Corruption Control Index</a> aggregate a wide variety of surveys – produced either in-house or by other organizations – in a (hopefully) statistically sophisticated way to come up with a number measuring the extent of corruption perceptions in a country.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> These indexes are not without their critics; even the organizations that produce them suggest that they need to be used with caution. As <a href="http://www.nsd.uib.no/rapport/nsd_rapport124.pdf">Rydland, Arnesen, and Østensen 2008</a> note,</p>
+<blockquote>
+<p>One of the main problems is that neither organisation provides a more detailed definition of corruption: the various attributes that constitute the concept are not identified and the relationship between them is not specified. For example, is the practice of offering gifts or extra favours to potential clients to be considered corruption if the intention is to encourage informal relations with them (Søreide 2005: 3)? And if so, how much weight should such a practice be accorded when constructing a corruption index compared with, say, the payment of massive bribes to secure a contract? Furthermore, what is meant by the extent of corruption? Does more corruption mean that instances of corruption are more frequent, or that they involve larger sums of money (Johnston and Kpundeh 2002: 34)? Since the constructers of the indices do not offer clear guidelines for how to classify various acts as either corrupt or legitimate, and since they do not specify what they mean by “more corrupt”, it is difficult to know exactly how corruption is defined. (p. 81).</p>
+</blockquote>
+<p>Other problems include the fact that different surveys, asking sometimes slightly different questions, are used to construct scores for different countries; and that scores are difficult to compare accross time. In the <a href="http://www.transparency.org/">TI</a> case, the organization explicitly warns researchers not to use the index for temporal comparisons over long periods of time, since they made some important methodological changes in 2012 which rendered their post-2012 scores incomparable with the scores from the earlier period. More generally, such indexes are very imprecise measurements of corruption, however defined; they are best used not to make hyper-precise judgments about levels of corruption in particular countries, but at best rough and ready estimates.</p>
+<p>Despite these problems, they are the best tool we have for making reasonably consistent comparisons across countries and over time, though everything I say below should be taken with a grain of salt, and supplemented by analysis of particular countries. Having read the explanations both organizations provide about their methodology, as well as the short note by <a href="http://www.nsd.uib.no/rapport/nsd_rapport124.pdf">Rydland, Arnesen, and Østensen</a> on existing corruption indexes, I have decided that we will be using here the <a href="http://info.worldbank.org/governance/wgi/index.aspx#doc-methodology">World Bank’s Corruption Control index</a> as our main measure of corruption, since (unlike the <a href="http://www.transparency.org/">TI</a> measure) it can be used to make comparisons over time. (It is also easier to download and cleanup, an important consideration for me right now). Your own measure of corruption is correlated at 0.52 with the World Bank’s measure; though not perfect, of course, this is not too bad for something that is so difficult to measure, so I will be using the POLS209 corruption index as well in the graphs below.</p>
+<p>The first graph shows you a simple scatterplot of the World Bank’s corruption control index vs. the POLS209 democracy score. (Dots are “jittered” a bit to avoid overplotting).</p>
+<p><img src="Corruption_Correlations_files/figure-html/unnamed-chunk-1-1.png" /></p>
+<p>As you can see, the graph shows a correlation between “being more democratic” (by the POLS209 measure) and “being less corrupt” (by the World Bank’s measure). The correlation is not by any means perfect; there are plenty of democratic country-years with high levels of corruption. But there are very few genuinely non-democratic regimes with with low corruption, and there is clearly some relationship between higher levels of democracy and less corruption. (The spike within the hybrid regime space is Singapore). The relationship is not very different if we use Freedom House’s measure of democracy instead of the POLS209 measure:</p>
+<p><img src="Corruption_Correlations_files/figure-html/unnamed-chunk-2-1.png" /></p>
+<p>Or if we use your own measure of corruption instead of the World Bank’s measure:</p>
+<p><img src="Corruption_Correlations_files/figure-html/unnamed-chunk-3-1.png" /></p>
+<p>(If we use your measure of corruption, we see fewer non-democratic but relatively uncorrupt country-years, and more democratic and relatively uncorrupt country-years).</p>
+<p>Of course, correlation is not causation - and “cross-country” correlations (correlations between measures of political and social characteristics in different countries and at different times) are especially difficult to interpret. Moreover, these associations between low corruption and high democracy are not nearly as clear if we look at variation over time, per country; few countries that become more democratic seem to show a commensurate decrease in corruption. To see this, take a look at the graph below. This is arranged from “most corrupt perceptions” (upper left-most country) to “least corrupt perceptions” (lower right-most country), on average, using the <a href="http://info.worldbank.org/governance/wgi/index.aspx#doc-methodology">WGI’s corruption control index</a>. It shows both the POLS209 democracy score (colored line) and the WGI’s corruption control index (grey ribbon) as they change in each country, plotted on a 0-1 scale.</p>
+<p><img src="Corruption_Correlations_files/figure-html/unnamed-chunk-4-1.png" /></p>
+<p>We had to throw away a lot of data, since the corruption control index only goes back to 1996 (and not for all countries), and the POLS209 measure of democracy is missing many years as well, so the graph is not as complete as it could be. Nevertheless, here are a couple of things to note. (You may notice more things, but this is only what I see right now).</p>
+<p>First, perceptions of corruption are pretty stable, despite the uncertainty in the WGI index (shown by the ribbon, which indicates a 95% confidence interval). Few countries show large changes in corruption perceptions, and these are not obviously correlated with political regime changes. There are some exceptions; Rwanda (towards the middle of the graph) shows a remarkable decrease in corruption perception, probably correlated with the rise to power of Paul Kagame, and so does Georgia, though (at least by your measure of democracy) these decreases in corruption were not related to any important changes in their political systems. (Eritrea, conversely, shows a remarkable increase in corruption, which is also not correlated, by your lights, with any political changes). Yet on average, corruption perceptions don’t show much of a trend anywhere, and there is little correlation between increases/decreases in democracy (at least by the POLS209 measure) and decreases/increases in corruption.<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> Why is corruption so seemingly stable, and why does it seem to be uncorrelated with political changes?</p>
+<p>Second, though many of the countries perceived to be highly corrupt have either hybrid or non-democratic regimes (e.g, Afghanistan, North Korea), and many of the countries perceived to be least corrupt have democratic regimes (e.g, the Netherlands, Chile) - there are several important exceptions. On the non-democratic, relatively non-corrupt side, we find Oman, Singapore, and Bahrain; on the democratic, corrupt side, we find Iraq and Paraguay, among others. What might explain the exceptions? How do non-democratic regimes manage to keep corruption perceptions to a minimum?</p>
+<p>In order to get a sense of how missing data in your measure of regime type might be affecting the results, we replicate the same graph but using Freedom House’s measure of democracy instead, which covers more years:</p>
+<p><img src="Corruption_Correlations_files/figure-html/unnamed-chunk-5-1.png" /></p>
+<p>Here the pattern is similar: uncorrupt democracies at the bottom, corrupt authoritarian regimes at the top, but with many exceptions. And again, there is little relation between changes in political regime and changes in corruption. Though a few countries do fit the expected pattern (e.g., Venezuela has become less democratic by Freedom House’s lights and apparently more corrupt in the period since 1996), the vast majority show no such pattern, despite many visible changes of regime in many countries. What might explain the lack of correlation?</p>
+<p>The final graph for today simply shows you the countries that have the greatest (positive and negative) changes in corruption perceptions from the graph above:</p>
+<p><img src="Corruption_Correlations_files/figure-html/unnamed-chunk-6-1.png" /></p>
+<p>Is there anything special about these countries? Why do Georgia and Rwanda show large decreases in corruption, while Eritrea, Zimbabwe, Kuwait, and Kyrgyzstan show large increases in corruption? Is there any relationship between these changes in corruption and any political changes in the country?</p>
+<p>One thing I haven’t shown you is how corruption correlates with wealth; it might be that changes in corruption have more to do with economic development than with political changes. But more on this topic tomorrow.</p>
+<p>What else would you like to see?</p>
+<p>All code for this post is available <a href="https://github.com/xmarquez/RCE-2015">in this repository</a>. If you are technically minded and want to learn some more, you might wish to download the <a href="http://www.r-project.org/">R programming language</a> and <a href="http://www.rstudio.com/">RStudio</a> and play with it; I can help you if you are interested. (If you want to replicate the graphs and correlations above, you will also need a spreadsheet with the Freedom House scores, available <a href="https://drive.google.com/file/d/0B5wyt4eDq98GZVhUamRKVXJpLVU/view?usp=sharing">here</a>, as well as the <a href="http://info.worldbank.org/governance/wgi/index.aspx#doc-methodology">WGI Corruption Control Index</a>, available in the repository.)</p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>See the description in <a href="http://www.nsd.uib.no/rapport/nsd_rapport124.pdf">Rydland, Arnesen, and Østensen 2008, p. 80</a> for some details of how this is done, and the respective “methodology” documents put out by <a href="http://www.transparency.org/">TI</a> and the <a href="http://info.worldbank.org/governance/wgi/index.aspx#doc-methodology">World Bank</a> for the more complete discussions of how these indexes are produced.<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>Some numerical tests confirm this, but a full demonstration is complicated.<a href="#fnref2">↩</a></p></li>
+</ol>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
