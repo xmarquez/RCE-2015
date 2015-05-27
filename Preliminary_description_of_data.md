@@ -1,8 +1,8 @@
 # RCE: Visualizing the Results, Part I
 
-(This post will be updated as new data -- late submissions -- come in. Another post analysing the correlation between our regime data and corruption data will follow in the middle of the week).
+(This post will be updated as new data -- late submissions -- come in. Another post analysing the correlation between our regime data and corruption data is [here](http://politicalpathologies.blogspot.com/2015/05/rce-visualizing-results-part-ii.html)).
 
-(Last updated 2015-05-27 15:25:24)
+(Last updated 2015-05-27 18:33:42)
 
 
 
@@ -30,4 +30,4 @@ All code for this post is available [in this repository][Code]. If you are techn
 
 [Code]: https://github.com/xmarquez/RCE-2015
 [Polity]: http://www.systemicpeace.org/inscr/
-[FH]: httm://freedomhouse.org
+[FH]: http://freedomhouse.org
