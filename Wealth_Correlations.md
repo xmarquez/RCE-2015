@@ -1,91 +1,26 @@
----
-title: 'RCE: Visualizing the Results, Part III: Wealth and Corruption'
-tags: rce
-output:
-  html_document:
-    keep_md: yes
-    self_contained: no
-    cache: yes
----
+# RCE: Visualizing the Results, Part III: Wealth and Corruption
 
 (This post explores some correlations between corruption and wealth. For the rest of the posts in the series, see [here](http://politicalpathologies.blogspot.co.nz/search/label/rce). It will also be updated if any final late submissions come in -- I think there may be a couple of people who are still working on their classification. I've corrected some small errors in the previous version of the dataset, so you should take a look at the previous posts as well).
 
-(Last updated `r lubridate::here()`)
+(Last updated 2015-06-01 15:18:08)
 
-```{r dataLoading, echo=FALSE,warning=FALSE,message=FALSE}
-library(dplyr)
-library(ggplot2)
-library(scales)
-library(countrycode)
-library(reshape2)
-library(stringr)
-#data <- read.csv("rce.csv")
-data_tv <- read.csv("rce_tv.csv")
-fh <- read.csv("../../../Data/fh.19722014.csv")
-wgi_cc <- read.csv("WGI Corruption Control Dataset.csv")
-gdp <- read.table("../../../Data/gdpv6.txt",header=TRUE)
 
-fh$country <- countrycode(fh$country, origin = "country.name", destination = "country.name", warn=TRUE)
-wgi_cc$country <- countrycode(wgi_cc$country, origin = "country.name", destination = "country.name", warn=TRUE)
-gdp$country <- countrycode(gdp$statenum, origin="cown",destination="country.name",warn=TRUE)
-
-wgi_cc <- melt(wgi_cc, id.vars=1:2)
-wgi_cc <- wgi_cc %>% mutate(year = as.numeric(str_extract(variable,"[0-9]+")),variable = str_extract(variable,"Estimate|StdErr|NumSrc|Rank|Lower|Upper"))
-wgi_cc <- dcast(wgi_cc, country + year ~ variable)
-
-data_tv <- left_join(data_tv,wgi_cc)
-
-data_tv <- data_tv %>% mutate(fh = 14 - (pr + cl))
-
-data_tv <- left_join(data_tv,gdp)
-
-fh_gdp <- left_join(fh, gdp %>% filter(!is.na(country)))
-
-wgi_gdp <- left_join(wgi_cc, gdp %>% filter(!is.na(country)))
-
-wgi_gdp <- left_join(wgi_gdp, data_tv)
-
-wgi_gdp <- wgi_gdp %>% ungroup() %>% mutate(regime_type = cut(Score,3,labels=c("Non-democratic","Hybrid","Democratic"),include.lowest=TRUE))
-
-```
 
 In the [last post of this series](http://politicalpathologies.blogspot.com/2015/05/rce-visualizing-results-part-ii.html), we saw that though there was a slight correlation accross countries between "being more democratic" and "being less corrupt," there was little obvious correlation between corruption and democracy *over time*: countries that became more democratic over the two decade period we investigated did not seem to have become obviously less corrupt, or vice-versa. We do not necessarily have a good explanation for this, but I suggested that wealth might have something to do with it. In this post, I look at correlations (across countries and over time) between corruption and wealth (as measured by GDP per capita).
 
 The first graph shows a simple scatterplot between the *level* of income at a given point in time, per person (in constant 2005 American dollars -- that is, inflation-adjusted numbers) and the [WGI][WGI] index of corruption perceptions. Each dot represent a country-year (e.g, Singapore 2006); if a particular year was classified by POLS209, it is given a color representing the regime type the class gave it.[^Levels]
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE}
-qplot(data=wgi_gdp, x= Estimate, y = rgdppc, color=regime_type,group=0) + scale_y_log10(label=dollar) + geom_smooth() + labs(y="Real GDP per capita (2005 constant $)",x="World Governance Indicators \nCorruption Control Index \n(higher means less corruption)",color = "POLS209 regime type") + theme_bw() + theme(legend.position = "bottom") + ggtitle("Wealth vs.\n corruption (World Bank Corruption Control Index)")
-
-```
+![](Wealth_Correlations_files/figure-html/unnamed-chunk-1-1.png) 
 
 As you can see, there is a fairly strong correlation between high income per capita and low corruption; almost all very rich countries (whatever their regime type) display low levels of corruption (or, more precisely, corruption perceptions), while poorer countries tend to be seen as more corrupt. A few middle-income countries are fairly corrupt but no highly corrupt country is among the very rich (income greater than about $25,000 per capita). The richest highly corrupt country is Equatorial Guinea, a result of the sudden influx of oil money there in the 1990s. (Almost all of this money was captured by the political elite, however; most people in Equatorial Guinea are very poor).
 
 This correlation, of course, does not tell us much about causation; we do not know if countries become rich because they happen to be less corrupt, or if they are seen as less corrupt because they are rich, or something else. A proper study of the relationship between these things would need a sophisticated statistical model in order to even begin to talk about causality, and we do not have the time or technical know-how to do that here. But we can at least take a look at the temporal relationship between corruption and income per capita in each country. The graph below is ordered from poorest to richest country, and it plots the corruption rank (grey ribbon) and the percentile rank of income (dots, colored by POLS209 regime type) on the same scale, per year:
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE,fig.height=42}
-wgi_gdp <- wgi_gdp %>% filter(!is.na(rgdppc),!is.na(Rank)) %>% group_by(year) %>% mutate(income_rank = percent_rank(rgdppc))
-wgi_gdp$Rank <- rescale(wgi_gdp$Rank)
-wgi_gdp$Lower <- rescale(wgi_gdp$Lower)
-wgi_gdp$Upper <- rescale(wgi_gdp$Upper)
-
-wgi_gdp$country <- reorder(wgi_gdp$country,wgi_gdp$income_rank)
-
-ggplot() + geom_point(data= wgi_gdp, aes(x=year,y=income_rank,color=regime_type)) + geom_path(data= wgi_gdp, aes(x=year,y=income_rank,color=regime_type,group=0)) + geom_path(data= wgi_gdp, aes(x=year,y=Rank))+ geom_ribbon(data= wgi_gdp, aes(x=year,y=Rank, ymin=Lower, ymax=Upper),alpha=0.2) + theme_bw() + guides(color=guide_legend(title.position="top",direction="horizontal")) + labs(x="Year",y="Income rank \nand WGI corruption rank \n(rescaled to 0-1)",color="POLS209 regime type") + theme(legend.position = "bottom") + ggtitle("Income rank and corruption rank, per year") + facet_wrap(~country,ncol=4) 
-
-```
+![](Wealth_Correlations_files/figure-html/unnamed-chunk-2-1.png) 
 
 As we can see, with some exceptions, the income rank of a country tracks quite well its corruption rank. The exceptions are nevertheless interesting. The 30 countries with the greatest differences between income rank and corruption rank are indicated in this graph, ordered from greastest difference to smallest difference:  
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE, fig.height=10}
-data <- wgi_gdp %>% group_by(country) %>% mutate(avg_difference = mean(Rank)-mean(income_rank)) 
-
-data$country <- reorder(data$country, desc(abs(data$avg_difference)))
-
-data <- data %>% filter(country %in% levels(country)[1:30])
-
-ggplot() + geom_point(data= data, aes(x=year,y=income_rank,color=regime_type)) + geom_path(data= data, aes(x=year,y=income_rank,color=regime_type,group=0)) + geom_path(data= data, aes(x=year,y=Rank))+ geom_ribbon(data= data, aes(x=year,y=Rank, ymin=Lower, ymax=Upper),alpha=0.2) + theme_bw() + guides(color=guide_legend(title.position="top",direction="horizontal")) + labs(x="Year",y="Income rank \nand WGI corruption rank \n(rescaled to 0-1)",color="POLS209 regime type") + theme(legend.position = "bottom") + ggtitle("Income rank and corruption rank, per year \n(showing countries with largest differences in both ranks)") + facet_wrap(~country,ncol=5) 
-
-```
+![](Wealth_Correlations_files/figure-html/unnamed-chunk-3-1.png) 
 
 Equatorial Guinea, Russia, and Turkmenistan are perceived as *more* corrupt than their income levels would indicate (the corruption ribbon is below their income rank), while Eritrea, Madagascar, Burkina Faso, El Salvador, Lesotho, and Rwanda are less corrupt than their income ranking would indicate (the corruption ribbon is above their income rank - remember "less corrupt" is higher in this graph). Why might this be the case? Does it have something to do with the political systems of these countries? 
 
@@ -93,15 +28,7 @@ Here's one potential story. It seems plausible that in some countries where the 
 
 The last graph I want to show you concerns economic *growth* and corruption. (Remember economic growth is a measure of how quickly total income in a country is increasing; but it is not a measure of how wealthy a country is on a per person basis. China is growing faster than the USA, but it is a much poorer country on a per person basis, even though their economies are of similar size). Here I plot the average estimated annual rate of per capita income growth against the corruption control index:  
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE}
-library(broom)
-data <- wgi_gdp %>% group_by(country) %>% do(tidy(lm(log(rgdppc) ~ year,data=.))) %>% filter(term != "(Intercept)")
-
-data <- left_join(data,wgi_gdp)
-
-qplot(data=data, x= Estimate, y = estimate, color=regime_type,group=0)  + scale_y_continuous(label=percent) + geom_smooth() + labs(y="Avg. estimated annual growth rate, 1996-2011",x="World Governance Indicators \nCorruption Control Index \n(higher means less corruption)",color = "POLS209 regime type") + theme_bw() + theme(legend.position = "bottom") + ggtitle("Growth vs.corruption (World Bank Corruption Control Index)")
-
-```
+![](Wealth_Correlations_files/figure-html/unnamed-chunk-4-1.png) 
 
 The plot has a characteristic funnel shape: countries with low corruption (right side of the graph) always have moderate growth rates; countries with high corruption (left side) can have both very high and very low growth rates. (Both growth "disasters," like Guinea or Fiji in this period, and growth "miracles," like Equatorial Guinea, Myanmar, or China, cluster at the high corruption end of the graph, in other words). Why might that be the case?
 
