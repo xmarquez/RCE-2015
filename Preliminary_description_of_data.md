@@ -2,11 +2,11 @@
 
 (This post will be updated as new data -- late submissions -- come in. Another post analysing the correlation between our regime data and corruption data is [here](http://politicalpathologies.blogspot.com/2015/05/rce-visualizing-results-part-ii.html)).
 
-(Last updated 2015-05-27 18:33:42)
+(Last updated 2015-06-01 10:49:00)
 
 
 
-We have now gathered enough data to start answering the research question you selected at the beginning of the term (seems like ages ago!). You designed a classification system in tutorials, and individually gathered data on lots of countries (119 so far to be exact). And the results are really good; your classification correlates at 0.78 with [Freedom House][FH] and at 0.74 with [Polity IV][Polity]. This is not bad at all; Polity IV and Freedom House themselves correlate at 0.89, which is only slightly higher. Professionals do not always agree about whether a country is democratic or not. These results make me feel benevolent; perhaps I should restore some of your points!
+We have now gathered enough data to start answering the research question you selected at the beginning of the term (seems like ages ago!). You designed a classification system in tutorials, and individually gathered data on lots of countries (120 so far to be exact). And the results are really good; your classification correlates at 0.78 with [Freedom House][FH] and at 0.74 with [Polity IV][Polity]. This is not bad at all; Polity IV and Freedom House themselves correlate at 0.89, which is only slightly higher. Professionals do not always agree about whether a country is democratic or not. These results make me feel benevolent; perhaps I should restore some of your points!
 
 The main version of the dataset your efforts have produced is available [here](https://www.dropbox.com/s/lce221sg8ftsbz5/rce.csv?dl=0). This file collects all your answers, puts them in a spreadsheet format, and calculates the "score" you gave the country. It is not straightforward to use or understand,[^Questions] so in the rest of this post, I will point out some general patterns and show you a couple of useful graphs. (There are also many things we could do with it but are too technical for us; more on these in the second post).
 

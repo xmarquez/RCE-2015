@@ -13,11 +13,10 @@
 <title>RCE: Visualizing the Results, Part II: Corruption</title>
 
 <script src="Corruption_Correlations_files/jquery-1.11.0/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="Corruption_Correlations_files/bootstrap-3.3.1/css/bootstrap.min.css" rel="stylesheet" />
-<script src="Corruption_Correlations_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="Corruption_Correlations_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="Corruption_Correlations_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="Corruption_Correlations_files/bootstrap-2.3.2/css/bootstrap.min.css" rel="stylesheet" />
+<link href="Corruption_Correlations_files/bootstrap-2.3.2/css/bootstrap-responsive.min.css" rel="stylesheet" />
+<script src="Corruption_Correlations_files/bootstrap-2.3.2/js/bootstrap.min.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <link rel="stylesheet"
@@ -49,14 +48,6 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
-img { 
-  max-width:100%; 
-  height: auto; 
-}
 </style>
 <div class="container-fluid main-container">
 
@@ -66,8 +57,8 @@ img {
 </div>
 
 
-<p>(This post is a bit more complicated than <a href="http://politicalpathologies.blogspot.com/2015/05/rce-visualizing-results-part-i.html">the first one</a>. It will also be updated as new data – late submissions – come in. Another post with more complex analysis will be coming up later, probably tomorrow).</p>
-<p>(Last updated 2015-05-27 19:29:10)</p>
+<p>(This post is a bit more complicated than <a href="http://politicalpathologies.blogspot.com/2015/05/rce-visualizing-results-part-i.html">the first one</a>. It will also be updated as new data – late submissions – come in. Another post with more complex analysis will be coming up later).</p>
+<p>(Last updated 2015-06-01 10:51:13)</p>
 <p>Corruption is difficult to measure, since it is, by definition, hidden. Efforts have been made by <a href="http://www.transparency.org/">Transparency International</a> and other organizations, including the <a href="http://info.worldbank.org/governance/wgi/index.aspx#doc-methodology">World Bank</a>, to develop indexes to track <em>perceptions</em> of corruption, but of course the perception of corruption is not the same thing as actual corruption, and such perceptions may not be consistent across countries. To be sure, we might expect that perceptions of corruption would be correlated with actual corruption, but it is also possible that a country that reforms suddenly sees lots of court cases and scandals coming to light, which might lead people to think corruption is worse there than in countries where it is unchecked but still hidden from public view.</p>
 <p>In any case, both the <a href="http://www.transparency.org/">Transparency International Corruption Perceptions Index</a> and the <a href="http://info.worldbank.org/governance/wgi/index.aspx#doc-methodology">World Bank Corruption Control Index</a> aggregate a wide variety of surveys – produced either in-house or by other organizations – in a (hopefully) statistically sophisticated way to come up with a number measuring the extent of corruption perceptions in a country.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> These indexes are not without their critics; even the organizations that produce them suggest that they need to be used with caution. As <a href="http://www.nsd.uib.no/rapport/nsd_rapport124.pdf">Rydland, Arnesen, and Østensen 2008</a> note,</p>
 <blockquote>

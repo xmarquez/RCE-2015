@@ -8,7 +8,7 @@ output:
     cache: yes
 ---
 
-(This post is a bit more complicated than [the first one](http://politicalpathologies.blogspot.com/2015/05/rce-visualizing-results-part-i.html). It will also be updated as new data -- late submissions -- come in. Another post with more complex analysis will be coming up later, probably tomorrow).
+(This post is a bit more complicated than [the first one](http://politicalpathologies.blogspot.com/2015/05/rce-visualizing-results-part-i.html). It will also be updated as new data -- late submissions -- come in. Another post with more complex analysis will be coming up later).
 
 (Last updated `r lubridate::here()`)
 
