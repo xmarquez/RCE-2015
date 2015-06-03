@@ -8,7 +8,7 @@ output:
     cache: yes
 ---
 
-(Following a suggestion from Grace Carroll, this post looks at potential correlations between colonial origins and corruption. For the rest of the posts in the series, see [here](http://politicalpathologies.blogspot.co.nz/search/label/rce)).
+(Following a suggestion from Grace Carroll, this post looks at potential correlations between colonial origins and corruption. For the rest of the posts in the series, see [here](http://politicalpathologies.blogspot.co.nz/search/label/rce). This post is more optional than the rest, since it does not make use of your own data).
 
 (Last updated `r lubridate::here()`)
 
@@ -68,11 +68,11 @@ names(geocoded_data)[1] <- "country"
 
 Grace wanted to know whether there is any correlation between colonial history and political corruption today. This is a difficult question to answer properly, but here's a first stab at showing you some patterns.
 
-Political history is complicated. Many currently existing countries were colonized by multiple powers at different points in time, and colonization has displayed many variants, from highly indirect forms of rule to direct annexation. Nevertheless, [Paul Hensel][ICOW] has collected data on the "primary colonizer" of each country currently in the international system (thanks Grace for pointing this dataset out to me). This is "[t]he colonial or imperial power that was most responsible for shaping the development of the entity (or entities) that became this modern state. This is typically the state that ruled over the majority of [a current country] (for cases where multiple colonial powers held parts of what became the modern state) or the state that ruled over [a current country] for the longest time (for cases where the colony changed hands one or more times before independence)" (Hensel, Colonial History Dataset Codebook, p. 6). 
+Political history is complicated. Many currently existing countries were colonized by multiple powers at different points in time, and colonization has displayed many variants, from highly indirect forms of rule to direct annexation. Nevertheless, [Paul Hensel][ICOW] has collected data on the "primary colonial ruler" of each country currently in the international system (thanks Grace for pointing this dataset out to me). This is "[t]he colonial or imperial power that was most responsible for shaping the development of the entity (or entities) that became this modern state. This is typically the state that ruled over the majority of [a current country] (for cases where multiple colonial powers held parts of what became the modern state) or the state that ruled over [a current country] for the longest time (for cases where the colony changed hands one or more times before independence)" (Hensel, Colonial History Dataset Codebook, p. 6). 
 
 The first graph I want to show you is just a map displaying the "primary colonial ruler" of each country in the world:
 
-```{r, echo=FALSE,warning=FALSE,message=FALSE,fig.height=8}
+```{r, echo=FALSE,warning=FALSE,message=FALSE,fig.height=8, cache=TRUE}
 library(rworldmap)
 library(dplyr)
 library(ggplot2)
@@ -84,12 +84,12 @@ world <- getMap()
 world <- fortify(world)
 world$id <- countrycode(world$id, origin="country.name",destination="country.name",warn=TRUE)
 
-colonial <- colonial %>% group_by(ColRuler) %>% mutate(num = n())
+data <- colonial %>% ungroup() %>% mutate(ColRuler = plyr::mapvalues(ColRuler, from =c("Never colonized"), to =NA)) %>% group_by(ColRuler) %>% mutate(num = n())
 
-ggplot()+ geom_map(aes(fill=reorder(ColRuler,desc(num)),map_id=country),map=world,data=colonial)+geom_path(data=world,aes(y=lat,x=long,group=group))+theme_bw() + theme(legend.position="bottom") + labs(fill="Primary colonial ruler",x="",y="")+guides(fill=guide_legend(title.position="top",ncol=3))
+ggplot()+ geom_map(aes(fill=reorder(ColRuler,desc(num),na.rm=TRUE),map_id=country),map=world,data=data)+geom_path(data=world,aes(y=lat,x=long,group=group))+theme_bw() + theme(legend.position="bottom") + labs(fill="Primary colonial ruler",x="",y="")+guides(fill=guide_legend(title.position="top",ncol=3))
 ```
 
-Among countries that exist today, the largest number were at some point British colonies; the second largest number were never colonies of any existing country (or at least were not fully incorporated into an empire; some countries suffered at the hands of colonial powers, like China, without ever having been fully colonized), and the third largest were colonies of France. Most of the currently existing countries in the world were at some point European colonies (often British), though independence dates vary widely, and the country from which currenly existing countries gained their independence was not necessarily their primary colonizer. Thus, in the graph below, countries are colored according to the country from which they gained their independence, rather than their "primary colonizer," with more transparent countries having earlier independence dates:
+Among countries that exist today, the largest number were at some point British colonies; the second largest number were never colonies of any existing country (or at least were not fully incorporated into an empire; some countries suffered at the hands of colonial powers, like China, without ever having been fully colonized), and the third largest were colonies of France. The world today has thus been deeply shaped, for good or ill, by the legacy of European empires. Most of the currently existing countries in the world were at some point European colonies (often British), though independence dates vary widely, and the countries from which currenly existing countries gained their independence were not necessarily their primary colonial rulers. In the graph below countries are colored according to the country from which they gained their independence, rather than their "primary colonial ruler," with more transparent countries having earlier independence dates:
 
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,fig.height=9,cache=TRUE}
 library(dplyr)
@@ -105,7 +105,7 @@ colonial <- colonial %>% group_by(IndFrom) %>% mutate(num2 = n())
 ggplot()+ geom_map(aes(fill=reorder(IndFrom,desc(num2)),map_id=country,alpha =IndYear),map=world,data=colonial %>% filter(IndYear > 1700))+geom_path(data=world,aes(y=lat,x=long,group=group))+theme_bw() + theme(legend.position="bottom") + labs(fill="Entity from which independence was gained \nor current country seceded from",x="",y="",alpha = "Year of independence \nor first emergence into the international system")+guides(fill=guide_legend(title.position="top",ncol=3),alpha=guide_legend(title.position="top"))
 ```
 
-The world today has thus been deeply shaped, for good or ill, by the legacy of European empires. Assuming that the primary colonizer had the greatest influence over a country's long-term institutions, we can then look at the distribution of corruption scores by primary colonial ruler (note each box width is proportional to the number of countries colonized; the Netherlands only colonized 3 currently existing countries, the United Kingdom 61):
+Nevertheless, assuming that the primary colonizer had the greatest influence over a country's long-term institutions, we can then look at the distribution of corruption scores by primary colonial ruler:[^Box]
 
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,cache=TRUE}
 library(dplyr)
@@ -127,7 +127,7 @@ qplot(data = data,x=reorder(ColRuler,Estimate,median,na.rm=TRUE),y=Estimate,geom
 
 We need to interpret this graph with care, given the vast differences in colonial experiences across the world. But basically what it says is that the three countries that were at some point part of, or colonies of, what is now the Netherlands (Belgium, Luxembourg, and Indonesia) have the highest median corruption scores (i.e., less corruption); countries that were never colonized (most of Western Europe, China, Thailand, etc.) have the second highest median corruption scores today (second-lowest levels of corruption, on average), though with a very wide spread (some countries that were never colonized have very high levels of corruption, others have very low levels), and so on. Belgium (which colonized the Democratic Republic of the Congo, Rwanda, and Burundi) has the worst record here.
 
-Here's how that data looks in map form (more transparent countries are less corrupt; the number is the average corruption rank over the 1996-2013 period):
+Here's how that data looks in map form (more transparent countries are less corrupt; the number on top of each territory is the average corruption rank over the 1996-2013 period, according to the [WGI][WGI]):
 
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,cache=TRUE, fig.height=9}
 library(dplyr)
@@ -165,7 +165,7 @@ qplot(data = data,x=reorder(ColRuler,Estimate,mean,na.rm=TRUE),y=Estimate,geom="
 
 Countries that achieved their independence after 1945 and whose primary colonial ruler was Britain (even if they achieved their independece from somebody else) have lower levels of corruption, on average, than countries whose primary colonial ruler was France or Spain; but now Russia and Italy have the worst record.
 
-Finally, here's a graph showing the distribution of Freedom House scores of democracy, by primary colonizer:
+Finally, here's a graph showing the distribution of Freedom House scores of democracy, by primary colonial ruler:
 
 ```{r, echo=FALSE,warning=FALSE,message=FALSE,cache=TRUE}
 library(dplyr)
@@ -192,6 +192,8 @@ I'm not sure what this all adds up to. The legacy of colonialism seems to have h
 What do you think of this? What questions do you have?
 
 All code for this post is available [in this repository][Code]. If you are technically minded and want to learn some more, you might wish to download the [R programming language](http://www.r-project.org/) and [RStudio](http://www.rstudio.com/) and play with it; I can help you if you are interested. (If you want to replicate the graphs and correlations above, you will also need [Paul Hensel's Colonial History Dataset, available here][ICOW].)
+
+[^Box]: The width of each box is proportional to the number of currently existing countries each power colonized; the Netherlands only colonized 3 currently existing countries, the United Kingdom 61.
 
 [Rydland]: http://www.nsd.uib.no/rapport/nsd_rapport124.pdf
 [WGI]: http://info.worldbank.org/governance/wgi/index.aspx#doc-methodology
