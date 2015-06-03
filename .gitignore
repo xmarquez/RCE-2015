@@ -16,3 +16,8 @@ Corruption_Correlations_files/bootstrap-2.3.2/img/glyphicons-halflings-white.png
 Corruption_Correlations_cache/
 Wealth_Correlations_files/bootstrap-2.3.2/img/glyphicons-halflings-white.png
 Wealth_Correlations_files/bootstrap-2.3.2/img/glyphicons-halflings.png
+*.rdx
+*.rdb
+Colonial_Origins_Correlations_files/bootstrap-2.3.2/img/glyphicons-halflings.png
+Colonial_Origins_Correlations_cache/html/__packages
+Colonial_Origins_Correlations_files/bootstrap-2.3.2/img/glyphicons-halflings-white.png

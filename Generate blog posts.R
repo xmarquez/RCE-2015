@@ -22,3 +22,11 @@ post <- mgsub(c(".png","![]("),c(".png?raw=TRUE","![](https://github.com/xmarque
 post <- c("---","title: 'RCE: Visualizing the Results, Part 3: Corruption and Wealth'","tags: 'rce'", "---","",post[2:length(post)])
 
 writeLines(post,"Visualizing the results part 3.md")
+
+post <- readLines("Colonial_Origins_Correlations.md")
+
+post <- mgsub(c(".png","![]("),c(".png?raw=TRUE","![](https://github.com/xmarquez/RCE-2015/raw/master/"),post)
+
+post <- c("---","title: 'RCE: Visualizing the Results, Part 4: Colonial Origins of Corruption?'","tags: 'rce'", "---","",post[2:length(post)])
+
+writeLines(post,"Visualizing the results part 4.md")

@@ -1,0 +1,202 @@
+---
+title: 'RCE: Visualizing the Results, Part IV: The Colonial Origins of Corruption?'
+tags: rce
+output:
+  html_document:
+    keep_md: yes
+    self_contained: no
+    cache: yes
+---
+
+(Following a suggestion from Grace Carroll, this post looks at potential correlations between colonial origins and corruption. For the rest of the posts in the series, see [here](http://politicalpathologies.blogspot.co.nz/search/label/rce)).
+
+(Last updated `r lubridate::here()`)
+
+```{r dataLoading, echo=FALSE,warning=FALSE,message=FALSE,cache=TRUE}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(countrycode)
+library(reshape2)
+library(stringr)
+data <- read.csv("rce.csv")
+data_tv <- read.csv("rce_tv.csv")
+fh <- read.csv("../../../Data/fh.19722014.csv")
+wgi_cc <- read.csv("WGI Corruption Control Dataset.csv")
+gdp <- read.table("../../../Data/gdpv6.txt",header=TRUE)
+colonial <- read.csv("../../../Data/ICOW Colonial History 1.0/coldata100.csv")
+
+fh$country <- countrycode(fh$country, origin = "country.name", destination = "country.name", warn=TRUE)
+wgi_cc$country <- countrycode(wgi_cc$country, origin = "country.name", destination = "country.name", warn=TRUE)
+gdp$country <- countrycode(gdp$statenum, origin="cown",destination="country.name",warn=TRUE)
+colonial <- colonial %>% mutate(country = countrycode(plyr::mapvalues(Name,from = c("German Dem. Rep. (East)","Republic of Vietnam (South)"), to =c("East Germany","South Vietnam")), origin = "country.name", destination = "country.name",warn=TRUE), ColRuler = countrycode(ColRuler, origin = "cown", destination = "country.name",warn=TRUE), IndFrom = countrycode(IndFrom, origin = "cown", destination = "country.name",warn=TRUE))
+colonial$IndFrom <- ifelse(is.na(colonial$IndFrom) & colonial$country %in% c("Guatemala","Honduras","El Salvador","Nicaragua","Costa Rica"),"United Provinces of Central America",colonial$IndFrom)
+colonial$IndFrom <- ifelse(is.na(colonial$IndFrom) & colonial$country %in% c("Guatemala","Honduras","El Salvador","Nicaragua","Costa Rica"),"United Provinces of Central America",colonial$IndFrom)
+
+colonial$ColRuler <- ifelse(is.na(colonial$ColRuler), "Never colonized", colonial$ColRuler)
+
+colonial$ColRuler <- plyr::mapvalues(colonial$ColRuler, from= c("Turkey","Russian Federation"),to=c("Ottoman Empire","Russia"))
+colonial$IndFrom <- plyr::mapvalues(colonial$IndFrom, from= c("Turkey","Russian Federation"),to=c("Ottoman Empire","Russia"))
+
+
+wgi_cc <- melt(wgi_cc, id.vars=1:2)
+wgi_cc <- wgi_cc %>% mutate(year = as.numeric(str_extract(variable,"[0-9]+")),variable = str_extract(variable,"Estimate|StdErr|NumSrc|Rank|Lower|Upper"))
+wgi_cc <- dcast(wgi_cc, country + year ~ variable)
+
+data_tv <- left_join(data_tv,wgi_cc)
+
+data_tv <- data_tv %>% mutate(fh = 14 - (pr + cl))
+
+data_tv <- left_join(data_tv,gdp)
+
+fh_gdp <- left_join(fh, gdp %>% filter(!is.na(country)))
+
+wgi_gdp <- left_join(wgi_cc, gdp %>% filter(!is.na(country)))
+
+wgi_gdp <- left_join(wgi_gdp, data_tv)
+
+wgi_gdp <- wgi_gdp %>% ungroup() %>% mutate(regime_type = cut(Score,3,labels=c("Non-democratic","Hybrid","Democratic"),include.lowest=TRUE))
+
+wgi_colonial <- left_join(wgi_gdp,colonial)
+
+library(ggmap)
+geocoded_data <- geocode(paste0("country:",plyr::mapvalues(colonial$country,from = c("Iran, Islamic Republic of", "Venezuela, Bolivarian Republic of", "Korea, Republic of", "Bolivia, Plurinational State of","Macedonia, the former Yugoslav Republic of","Moldova, Republic of","Congo, the Democratic Republic of the","Tanzania, United Republic of","Yemen Arab Republic","Yemen People's Republic","Korea, Democratic People's Republic of","Micronesia, Federated States of"), to = c("Iran","Venezuela","South Korea", "Bolivia","Macedonia","Moldova","Democratic Republic of the Congo","Tanzania","Yemen","Yemen","North Korea","Micronesia"))))
+
+geocoded_data <- cbind(colonial$country,geocoded_data)
+names(geocoded_data)[1] <- "country"
+```
+
+Grace wanted to know whether there is any correlation between colonial history and political corruption today. This is a difficult question to answer properly, but here's a first stab at showing you some patterns.
+
+Political history is complicated. Many currently existing countries were colonized by multiple powers at different points in time, and colonization has displayed many variants, from highly indirect forms of rule to direct annexation. Nevertheless, [Paul Hensel][ICOW] has collected data on the "primary colonizer" of each country currently in the international system (thanks Grace for pointing this dataset out to me). This is "[t]he colonial or imperial power that was most responsible for shaping the development of the entity (or entities) that became this modern state. This is typically the state that ruled over the majority of [a current country] (for cases where multiple colonial powers held parts of what became the modern state) or the state that ruled over [a current country] for the longest time (for cases where the colony changed hands one or more times before independence)" (Hensel, Colonial History Dataset Codebook, p. 6). 
+
+The first graph I want to show you is just a map displaying the "primary colonial ruler" of each country in the world:
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,fig.height=8}
+library(rworldmap)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(countrycode)
+library(reshape2)
+library(stringr)
+world <- getMap()
+world <- fortify(world)
+world$id <- countrycode(world$id, origin="country.name",destination="country.name",warn=TRUE)
+
+colonial <- colonial %>% group_by(ColRuler) %>% mutate(num = n())
+
+ggplot()+ geom_map(aes(fill=reorder(ColRuler,desc(num)),map_id=country),map=world,data=colonial)+geom_path(data=world,aes(y=lat,x=long,group=group))+theme_bw() + theme(legend.position="bottom") + labs(fill="Primary colonial ruler",x="",y="")+guides(fill=guide_legend(title.position="top",ncol=3))
+```
+
+Among countries that exist today, the largest number were at some point British colonies; the second largest number were never colonies of any existing country (or at least were not fully incorporated into an empire; some countries suffered at the hands of colonial powers, like China, without ever having been fully colonized), and the third largest were colonies of France. Most of the currently existing countries in the world were at some point European colonies (often British), though independence dates vary widely, and the country from which currenly existing countries gained their independence was not necessarily their primary colonizer. Thus, in the graph below, countries are colored according to the country from which they gained their independence, rather than their "primary colonizer," with more transparent countries having earlier independence dates:
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,fig.height=9,cache=TRUE}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(countrycode)
+library(reshape2)
+library(stringr)
+colonial <- colonial %>% mutate(IndYear= as.numeric(str_replace(IndDate,"[0-9]{2}$","")))
+
+colonial <- colonial %>% group_by(IndFrom) %>% mutate(num2 = n())
+
+ggplot()+ geom_map(aes(fill=reorder(IndFrom,desc(num2)),map_id=country,alpha =IndYear),map=world,data=colonial %>% filter(IndYear > 1700))+geom_path(data=world,aes(y=lat,x=long,group=group))+theme_bw() + theme(legend.position="bottom") + labs(fill="Entity from which independence was gained \nor current country seceded from",x="",y="",alpha = "Year of independence \nor first emergence into the international system")+guides(fill=guide_legend(title.position="top",ncol=3),alpha=guide_legend(title.position="top"))
+```
+
+The world today has thus been deeply shaped, for good or ill, by the legacy of European empires. Assuming that the primary colonizer had the greatest influence over a country's long-term institutions, we can then look at the distribution of corruption scores by primary colonial ruler (note each box width is proportional to the number of countries colonized; the Netherlands only colonized 3 currently existing countries, the United Kingdom 61):
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,cache=TRUE}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(countrycode)
+library(reshape2)
+library(stringr)
+data <- wgi_colonial %>% filter(!is.na(ColRuler))
+data2 <- colonial %>% group_by(ColRuler) %>% mutate(num = n())
+
+data <- left_join(data,data2 %>% select(country,num))
+
+data$ColRuler <- paste0(data$ColRuler," (",data$num,")")
+
+qplot(data = data,x=reorder(ColRuler,Estimate,median,na.rm=TRUE),y=Estimate,geom="boxplot",varwidth=TRUE) + coord_flip() + theme_bw() + labs(x= "Primary Colonial Ruler \n(number of currently existing countries that were colonies \nor otherwise part of this entity in the past in parentheses)",y = "Estimated corruption score, WGI (higher is less corrupt)")
+
+```
+
+We need to interpret this graph with care, given the vast differences in colonial experiences across the world. But basically what it says is that the three countries that were at some point part of, or colonies of, what is now the Netherlands (Belgium, Luxembourg, and Indonesia) have the highest median corruption scores (i.e., less corruption); countries that were never colonized (most of Western Europe, China, Thailand, etc.) have the second highest median corruption scores today (second-lowest levels of corruption, on average), though with a very wide spread (some countries that were never colonized have very high levels of corruption, others have very low levels), and so on. Belgium (which colonized the Democratic Republic of the Congo, Rwanda, and Burundi) has the worst record here.
+
+Here's how that data looks in map form (more transparent countries are less corrupt; the number is the average corruption rank over the 1996-2013 period):
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,cache=TRUE, fig.height=9}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(countrycode)
+library(reshape2)
+library(stringr)
+data <- wgi_colonial %>% filter(!is.na(ColRuler)) %>% group_by(country) %>% summarise(ColRuler = unique(ColRuler), avg_rank = mean(100-Rank,na.rm=TRUE)) %>% group_by(ColRuler) %>% mutate(num=n())
+
+data <- left_join(data,geocoded_data)
+ggplot()+ geom_map(aes(fill=reorder(ColRuler,desc(num)),map_id=country,alpha=avg_rank),map=world,data=data)+geom_path(data=world,aes(y=lat,x=long,group=group))+theme_bw() + theme(legend.position="bottom") + labs(fill="Primary colonial ruler",x="",y="",alpha="Avg. corruption rank over 1996-2013 period \n(lower means less corruption)")+guides(fill=guide_legend(title.position="top",ncol=3), alpha=guide_legend(title.position="top")) + geom_text(aes(label=round(avg_rank,0),x=lon,y=lat),data=data, size = 2)
+```
+
+If we restrict ourselves only to those countries that achieved independence in the post WWII era (and excepting modern-day Germany and Taiwan, which are kind of complicated cases), this is what we find:
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,cache=TRUE}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(countrycode)
+library(reshape2)
+library(stringr)
+wgi_colonial <- wgi_colonial %>% mutate(IndYear= as.numeric(str_replace(IndDate,"[0-9]{2}$","")))
+
+data <- wgi_colonial %>% filter(!is.na(ColRuler),IndYear > 1945, ColRuler != "Never colonized")
+data2 <- colonial %>% group_by(ColRuler) %>% filter(IndYear > 1945) %>% mutate(num = n())
+
+data <- left_join(data,data2 %>% select(country,num))
+
+data$ColRuler <- paste0(data$ColRuler," (",data$num,")")
+qplot(data = data,x=reorder(ColRuler,Estimate,mean,na.rm=TRUE),y=Estimate,geom="boxplot",varwidth=TRUE) + coord_flip() + theme_bw() + labs(x= "Primary Colonial Ruler \n(number of currently existing countries \nthat became independent after 1945 and were \ncolonized by this entity in parentheses)",y = "Estimated corruption score, WGI (higher is less corrupt)") 
+
+```
+
+Countries that achieved their independence after 1945 and whose primary colonial ruler was Britain (even if they achieved their independece from somebody else) have lower levels of corruption, on average, than countries whose primary colonial ruler was France or Spain; but now Russia and Italy have the worst record.
+
+Finally, here's a graph showing the distribution of Freedom House scores of democracy, by primary colonizer:
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE,cache=TRUE}
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(countrycode)
+library(reshape2)
+library(stringr)
+data <- wgi_colonial %>% filter(!is.na(ColRuler),IndYear > 1945, ColRuler != "Never colonized",!is.na(fh)) 
+data2 <- colonial %>% group_by(ColRuler) %>% filter(IndYear > 1945) %>% mutate(num = n())
+
+data <- left_join(data,data2 %>% select(country,num))
+
+data$ColRuler <- paste0(data$ColRuler," (",data$num,")")
+
+qplot(data = data %>% filter(!is.na(fh)),x=reorder(ColRuler,fh,mean,na.rm=TRUE),y=fh,geom="boxplot",varwidth=TRUE) + coord_flip() + theme_bw() + labs(x= "Primary Colonial Ruler \n(number of currently existing countries \nthat became independent after 1945 and were \ncolonized by this entity in parentheses)",y = "Reversed Freedom House score (higher is more democratic)") 
+
+```
+
+On average, countries that were colonized by Spain and achieved their independence since 1945 have had higher levels of democracy (with a big spread) than countries colonized by Britain or France, though French colonies have done worse, on average, than British colonies by this measure.
+
+I'm not sure what this all adds up to. The legacy of colonialism seems to have had an impact, but colonial experiences have varied greatly over the last two centuries, even within a single European empire. Corruption outcomes within former British colonies, for example, have varied enormously, even if they differ, on average, from outcomes within former French colonies. 
+
+What do you think of this? What questions do you have?
+
+All code for this post is available [in this repository][Code]. If you are technically minded and want to learn some more, you might wish to download the [R programming language](http://www.r-project.org/) and [RStudio](http://www.rstudio.com/) and play with it; I can help you if you are interested. (If you want to replicate the graphs and correlations above, you will also need [Paul Hensel's Colonial History Dataset, available here][ICOW].)
+
+[Rydland]: http://www.nsd.uib.no/rapport/nsd_rapport124.pdf
+[WGI]: http://info.worldbank.org/governance/wgi/index.aspx#doc-methodology
+[TI]: http://www.transparency.org/
+[Code]: https://github.com/xmarquez/RCE-2015
+[Polity]: http://www.systemicpeace.org/inscr/
+[FH]: http://freedomhouse.org
+[ICOW]: http://www.paulhensel.org/icowcol.html

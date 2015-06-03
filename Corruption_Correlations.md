@@ -2,7 +2,7 @@
 
 (This post is a bit more complicated than [the first one](http://politicalpathologies.blogspot.com/2015/05/rce-visualizing-results-part-i.html). It will also be updated as new data -- late submissions -- come in. Another post with more complex analysis will be coming up later).
 
-(Last updated 2015-06-01 10:51:13)
+(Last updated 2015-06-03 09:00:10)
 
 
 
@@ -14,7 +14,7 @@ In any case, both the [Transparency International Corruption Perceptions Index][
 
 Other problems include the fact that different surveys, asking sometimes slightly different questions, are used to construct scores for different countries; and that scores are difficult to compare across time. In the [TI][TI] case, the organization explicitly warns researchers not to use the index for temporal comparisons over long periods of time, since they made some important methodological changes in 2012 which rendered their post-2012 scores incomparable with the scores from the earlier period. More generally, such indexes are very imprecise measurements of corruption, however defined; they are best used not to make hyper-precise judgments about levels of corruption in particular countries, but at best rough and ready estimates. 
 
-Despite these problems, they are the best tool we have for making reasonably consistent comparisons across countries and over time, though everything I say below should be taken with a grain of salt, and supplemented by analysis of particular countries. Having read the explanations both organizations provide about their methodology, as well as the short note by [Rydland, Arnesen, and Østensen][Rydland] on existing corruption indexes, I have decided that we will be using here the [World Bank's Corruption Control index][WGI] as our main measure of corruption, since (unlike the [TI][TI] measure) it can be used to make comparisons over time. (It is also easier to download and cleanup, an important consideration for me right now). Your own measure of corruption is correlated at 0.52 with the World Bank's measure; though not perfect, of course, this is not too bad for something that is so difficult to measure, so I will be using the POLS209 corruption index as well in the graphs below.
+Despite these problems, they are the best tool we have for making reasonably consistent comparisons across countries and over time, though everything I say below should be taken with a grain of salt, and supplemented by analysis of particular countries. Having read the explanations both organizations provide about their methodology, as well as the short note by [Rydland, Arnesen, and Østensen][Rydland] on existing corruption indexes, I have decided that we will be using here the [World Bank's Corruption Control index][WGI] as our main measure of corruption, since (unlike the [TI][TI] measure) it can be used to make comparisons over time. (It is also easier to download and cleanup, an important consideration for me right now). Your own measure of corruption is correlated at 0.53 with the World Bank's measure; though not perfect, of course, this is not too bad for something that is so difficult to measure, so I will be using the POLS209 corruption index as well in the graphs below.
 
 The first graph shows you a simple scatterplot of the World Bank's corruption control index vs. the POLS209 democracy score. (Dots are "jittered" a bit to avoid overplotting). 
 

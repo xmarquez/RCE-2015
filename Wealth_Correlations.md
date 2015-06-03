@@ -2,7 +2,7 @@
 
 (This post explores some correlations between corruption and wealth. For the rest of the posts in the series, see [here](http://politicalpathologies.blogspot.co.nz/search/label/rce). It will also be updated if any final late submissions come in -- I think there may be a couple of people who are still working on their classification. I've corrected some small errors in the previous version of the dataset, so you should take a look at the previous posts as well).
 
-(Last updated 2015-06-01 15:18:08)
+(Last updated 2015-06-03 09:03:25)
 
 
 
