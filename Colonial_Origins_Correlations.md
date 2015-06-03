@@ -2,7 +2,7 @@
 
 (Following a suggestion from Grace Carroll, this post looks at potential correlations between colonial origins and corruption. For the rest of the posts in the series, see [here](http://politicalpathologies.blogspot.co.nz/search/label/rce). This post is more optional than the rest, since it does not make use of your own data).
 
-(Last updated 2015-06-03 16:09:58)
+(Last updated 2015-06-03 16:27:57)
 
 
 
@@ -32,7 +32,7 @@ If we restrict ourselves only to those countries that achieved independence in t
 
 ![](Colonial_Origins_Correlations_files/figure-html/unnamed-chunk-5-1.png) 
 
-Countries that achieved their independence after 1945 and whose primary colonial ruler was Britain (even if they achieved their independece from somebody else) have lower levels of corruption, on average, than countries whose primary colonial ruler was France or Spain; but now Russia and Italy have the worst record.
+Countries that achieved their independence after 1945 and whose primary colonial ruler was Britain (even if they achieved their independece from somebody else) have lower levels of corruption, on average, than countries whose primary colonial ruler was France or Spain; and Russia and Italy have the worst record.
 
 Finally, here's a graph showing the distribution of Freedom House scores of democracy, by primary colonial ruler:
 

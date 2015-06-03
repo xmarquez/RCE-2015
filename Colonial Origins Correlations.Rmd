@@ -84,7 +84,7 @@ world <- getMap()
 world <- fortify(world)
 world$id <- countrycode(world$id, origin="country.name",destination="country.name",warn=TRUE)
 
-data <- colonial %>% ungroup() %>% mutate(ColRuler = plyr::mapvalues(ColRuler, from =c("Never colonized"), to =NA)) %>% group_by(ColRuler) %>% mutate(num = n())
+data <- colonial %>% filter(ColRuler != "Never colonized") %>% group_by(ColRuler) %>% mutate(num = n())
 
 ggplot()+ geom_map(aes(fill=reorder(ColRuler,desc(num),na.rm=TRUE),map_id=country),map=world,data=data)+geom_path(data=world,aes(y=lat,x=long,group=group))+theme_bw() + theme(legend.position="bottom") + labs(fill="Primary colonial ruler",x="",y="")+guides(fill=guide_legend(title.position="top",ncol=3))
 ```
@@ -139,7 +139,12 @@ library(stringr)
 data <- wgi_colonial %>% filter(!is.na(ColRuler)) %>% group_by(country) %>% summarise(ColRuler = unique(ColRuler), avg_rank = mean(100-Rank,na.rm=TRUE)) %>% group_by(ColRuler) %>% mutate(num=n())
 
 data <- left_join(data,geocoded_data)
-ggplot()+ geom_map(aes(fill=reorder(ColRuler,desc(num)),map_id=country,alpha=avg_rank),map=world,data=data)+geom_path(data=world,aes(y=lat,x=long,group=group))+theme_bw() + theme(legend.position="bottom") + labs(fill="Primary colonial ruler",x="",y="",alpha="Avg. corruption rank over 1996-2013 period \n(lower means less corruption)")+guides(fill=guide_legend(title.position="top",ncol=3), alpha=guide_legend(title.position="top")) + geom_text(aes(label=round(avg_rank,0),x=lon,y=lat),data=data, size = 2)
+
+data2 <- data
+
+data <- data %>% filter(ColRuler != "Never colonized")
+
+ggplot()+ geom_map(aes(fill=reorder(ColRuler,desc(num)),map_id=country,alpha=avg_rank),map=world,data=data)+geom_path(data=world,aes(y=lat,x=long,group=group))+theme_bw() + theme(legend.position="bottom") + labs(fill="Primary colonial ruler",x="",y="",alpha="Avg. corruption rank over 1996-2013 period \n(lower means less corruption)")+guides(fill=guide_legend(title.position="top",ncol=3), alpha=guide_legend(title.position="top")) + geom_text(aes(label=round(avg_rank,0),x=lon,y=lat),data=data2, size = 2)
 ```
 
 If we restrict ourselves only to those countries that achieved independence in the post WWII era (and excepting modern-day Germany and Taiwan, which are kind of complicated cases), this is what we find:
@@ -163,7 +168,7 @@ qplot(data = data,x=reorder(ColRuler,Estimate,mean,na.rm=TRUE),y=Estimate,geom="
 
 ```
 
-Countries that achieved their independence after 1945 and whose primary colonial ruler was Britain (even if they achieved their independece from somebody else) have lower levels of corruption, on average, than countries whose primary colonial ruler was France or Spain; but now Russia and Italy have the worst record.
+Countries that achieved their independence after 1945 and whose primary colonial ruler was Britain (even if they achieved their independece from somebody else) have lower levels of corruption, on average, than countries whose primary colonial ruler was France or Spain; and Russia and Italy have the worst record.
 
 Finally, here's a graph showing the distribution of Freedom House scores of democracy, by primary colonial ruler:
 
